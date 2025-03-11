@@ -3,19 +3,19 @@ import styles from './Pokemon.module.css';
 
 
 const SearchPokemon = () => {
-    const [letter, setLetter] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [pokemonName, setPokemonName] = useState('');
     const [img, setImg] = useState('');
-    const [msg, setMsg] = useState('')
+    const [msgError, setMsgError] = useState('')
     let timeout;
 
     const getPokemons = () => {
-        fetch(`https://pokeapi.co/api/v2/pokemon/${letter.toLocaleLowerCase()}/`)
+        fetch(`https://pokeapi.co/api/v2/pokemon/${searchInput.toLocaleLowerCase()}/`)
             .then(response => {
 
                 setTimeout(() => {
                     if (!response.ok) {
-                      timeout = setMsg('No se ha podido encontrar el pokemon.')
+                      timeout = setMsgError('No se ha podido encontrar el pokémon.')
                       throw new Error('La solicitud no se ha podido realizar');
                     }
                   }, 2000) 
@@ -37,23 +37,23 @@ const SearchPokemon = () => {
 
 
     useEffect(() => {
-        getPokemons(letter);
+        getPokemons(searchInput);
 
-        if (!letter) {
+        if (!searchInput) {
             setPokemonName('');
             setImg('');
-            setMsg('');
+            setMsgError('');
         }
-    }, [letter]);
+    }, [searchInput]);
 
 
     return (
         <>
-            <h1>Pokemon</h1>
+            <h1>Pokémon</h1>
 
             <form className={styles.formulario}>
-                <input type='text' value={letter} onChange={(e) => setLetter(e.target.value)} placeholder='Ingresa el nombre del pokemon' />
-                <button type='submit' onClick={() => setLetter('')}>Borrar</button>
+                <input type='text' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder='Ingresa el nombre del pokemon' />
+                <button type='submit' onClick={() => setSearchInput('')}>Borrar</button>
             </form>
             {pokemonName &&
                 <ul>
@@ -63,8 +63,8 @@ const SearchPokemon = () => {
                     </li>
                 </ul>
             }
-            {msg &&
-                <h2>{msg}</h2>
+            {!pokemonName &&
+                <h2>{msgError}</h2>
             }
         </>
     )
